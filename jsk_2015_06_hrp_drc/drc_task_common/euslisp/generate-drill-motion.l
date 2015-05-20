@@ -468,89 +468,32 @@
       (when draw? (send (send *drill* :get :grasp-coords) :draw-on :flush t))
       ;; solve ik for grasp
       (setq ik-ret (fullbody-inverse-kinematics-for-drill-grasp-single :draw? draw? :rotation-axis rotation-axis))
-      (block drill-rotate-ik
-	(when (drill-rotate? 
-	       ;; (not (setq ik-ret-rot (fullbody-inverse-kinematics-for-drill-grasp-single :draw? draw? :rotation-axis (list t t t))))
-	       )
-	  (ros::ros-warn "failed ik :rotation-axis (list t t t)")
-	  (ros::ros-info "start drill-rotate!!")
-	  (setq ik-ret (fullbody-inverse-kinematics-for-drill-grasp-single :draw? draw? :rotation-axis (list t t z)))
-	  ;;
-	  ;;2105/05/19
-	  ;;
-	  (setq  z-coords (send (send (send :robot :angle-vector ik-ret) *drill-main-arm*) :copy-worldcoords))
-	  (if (eq *drill-main-arm* :rarm)
-	      (progn
+      (when (drill-rotate? 
+	     ;; (not (setq ik-ret-rot (fullbody-inverse-kinematics-for-drill-grasp-single :draw? draw? :rotation-axis (list t t t))))
+	     )
+	(ros::ros-warn "failed ik :rotation-axis (list t t t)")
+	(ros::ros-info "start drill-rotate!!")
+	(setq ik-ret (fullbody-inverse-kinematics-for-drill-grasp-single :draw? draw? :rotation-axis (list t t z)))
+	;;
+	;;2105/05/19
+	;;
+	(setq  z-coords (send (send (send :robot :angle-vector ik-ret) *drill-main-arm*) :copy-worldcoords))
+	(if (eq *drill-main-arm* :rarm)
+	    (progn
 		(setq positive-rot 10)
 		(setq negtive-rot -40)
 		)
-	    (progn
-	      (setq positive-rot 30)
-	      (setq negative-rot 10)
+	  (progn
+	    (setq positive-rot 30)
+	    (setq negative-rot 10)
 	    ))
-	    (setq positive (send (send z-coords :copy-worldcoords) :rotate (deg2rad 10) :z))
-	    (setq negative (send (send z-coords :copy-worldcoords) :rotate (deg2rad -40) :z)))
+	(setq positive (send (send z-coords :copy-worldcoords) :rotate (deg2rad 10) :z))
+	(setq negative (send (send z-coords :copy-worldcoords) :rotate (deg2rad -40) :z)))
+      )
 
-	  ;;
-	  ;;end
-	  ;;
 
-	  ;;
-	  ;;
-	;;search better arm grasp coords
-	  ;; (while (not (and
-	  ;; 	       (send *robot* :angle-vector (get-reach-drill-pre-pose))
-	  ;; 	       (send *robot* :fix-leg-to-coords original-foot-midcoords)
-	  ;; 	       (and
-	  ;; 		(or (setq ik-ret (fullbody-inverse-kinematics-for-drill-grasp-single
-	  ;; 				  :arm-tc (send (send (send *drill* :get :grasp-coords) :copy-worldcoords) :rotate (deg2rad cnt-deg) :z)
-	  ;; 				  :draw? nil :rotation-axis (list t t t)))
-	  ;; 		    (setq ik-ret (fullbody-inverse-kinematics-for-drill-grasp-single 
-	  ;; 				  :arm-tc (send (send (send *drill* :get :grasp-coords) :copy-worldcoords) :rotate (deg2rad (- cnt-deg)) :z)
-	  ;; 				  :draw? nil :rotation-axis (list t t t))))
-	  ;; 		(send *robot* :angle-vector ik-ret)
-	  ;; 		(send *robot* :fix-leg-to-coords original-foot-midcoords))
-		       ;; ;;calculate target coords (rotate-coords)
-		      ;;  (setq rotate-matrix (m* (send 
-		      ;; 				(send (gethash *drill-main-arm* *arm-drill-grasp-coords*) :copy-worldcoords ) :worldrot)
-		      ;; 			       (inverse-matrix 
-		      ;; 				(send (send (send *drill* :get :grasp-coords) :copy-worldcoords) :worldrot))))
-		      ;;  (setq rotate-coords (make-cascoords
-		      ;; 			    :pos (send (send (gethash *drill-main-arm* *arm-drill-grasp-coords*) :copy-worldcoords) :worldpos)
-		      ;; 			    :rot (m* (send 
-		      ;; 				      (send (gethash *drill-main-arm* *arm-drill-grasp-coords*) :copy-worldcoords ) :worldrot)
-		      ;; 				     rotate-matrix)))
-		      ;;  ;;test ik 
-		      ;;  (setq ik-ret-tester (fullbody-inverse-kinematics-for-drill-grasp-single :arm-tc (send (send (gethash *drill-main-arm* *arm-drill-grasp-coords*) :copy-worldcoords) :translate (float-vector push-dist 0 (- air-grasp-up-dist)) :local) :draw? draw? :rotation-axis (list t t t)))
-		      ;;  (send *robot* :angle-vector ik-ret-tester)
-		      ;;  (send *robot* :fix-leg-to-coords original-foot-midcoords)
-		      ;;  (setq ik-ret-tester (fullbody-inverse-kinematics-for-drill-grasp-single :arm-tc (send (send (gethash *drill-main-arm* *arm-drill-grasp-coords*) :copy-worldcoords) :translate (float-vector push-dist 0 down-dist) :local) :draw? draw? :rotation-axis (list t t t)))
-		      ;;  (send *robot* :angle-vector ik-ret-tester)
-		      ;;  (send *robot* :fix-leg-to-coords original-foot-midcoords)
-		      ;;  (setq ik-ret-tester (fullbody-inverse-kinematics-for-drill-grasp-single :arm-tc (send (send (gethash *drill-main-arm* *arm-drill-grasp-coords*) :copy-worldcoords) :translate (float-vector -30 0 down-dist) :local) :draw? draw? :rotation-axis (list t t t)))
-		      ;;  (send *robot* :angle-vector ik-ret-tester)
-		      ;;  (send *robot* :fix-leg-to-coords original-foot-midcoords)
-		      ;;  (setq ik-ret-tester (fullbody-inverse-kinematics-for-drill-grasp-single :arm-tc (send (send (gethash *drill-main-arm* *arm-drill-grasp-coords*) :copy-worldcoords) :translate (float-vector (- reach-dist) 0 -0) :local) :draw? draw? :rotation-axis (list t t t)))
-		      ;;  (send *robot* :angle-vector ik-ret-tester)
-		      ;;  (send *robot* :fix-leg-to-coords original-foot-midcoords)
-		      ;;  (setq ik-ret-tester (fullbody-inverse-kinematics-for-drill-grasp-single  :arm-tc (send (send rotate-coords :copy-worldcoords) :translate (float-vector 0 0 (- air-grasp-up-dist)) :local):draw? draw? :rotation-axis (list t t t)))
-		      ;;  (send *robot* :angle-vector ik-ret-tester)
-		      ;;  (send *robot* :fix-leg-to-coords original-foot-midcoords)
-		      ;;  (setq ik-ret-tester (fullbody-inverse-kinematics-for-drill-grasp-single :arm-tc (send (send rotate-coords :copy-worldcoords) :translate (float-vector 0 0 down-dist)) :draw? draw? :rotation-axis (list t t t)))
-		      ;;  (send *robot* :angle-vector ik-ret-tester)
-		      ;;  (send *robot* :fix-leg-to-coords original-foot-midcoords)
-		      ;;  (setq ik-ret-tester (fullbody-inverse-kinematics-for-drill-grasp-single  :arm-tc (send (send rotate-coords :copy-worldcoords) :translate (float-vector (- reach-dist) 0 0)) :draw? draw? :rotation-axis (list t t t)))
-		      ;;  (ros::ros-info "solve drill rotate ik")
-		      ;;  )
-		      ;; )
-	    ;; (setq cnt-deg (+ cnt-deg once-deg))
-	    ;; (when (> cnt-deg 50) (progn (return-from drill-rotate-ik nil)
-	    ;; 				(ros::ros-warn "failed drill rotate ik"))
-	    ;; 	  )
-	    ;; )
-	  )
-	)
-      (let ((robot-angle-vector ik-ret))
+
+    (let ((robot-angle-vector ik-ret))
 	(when ik-ret 
 	  (send *drill* :put :grasp-coords
 		(make-cascoords
