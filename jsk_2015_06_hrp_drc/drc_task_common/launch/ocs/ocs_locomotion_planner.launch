@@ -1,6 +1,7 @@
 <launch>
   <arg name="REFINE_FOOTSTEP" default="true" />
   <arg name="ocs" default="true" />
+  <arg name="USE_EUS_PLANNER" default="true"/>
   <remap from="/tf" to="/ocs/tf" if="$(arg ocs)"/>
   <remap from="/joint_states" to="/ocs/joint_states" if="$(arg ocs)"/>
   <remap from="/robot_description" to="/ocs/robot_description" if="$(arg ocs)"/>
@@ -11,7 +12,8 @@
           name="footstep_planner"
           respawn="true"
           cwd="node"
-          output="screen">
+          output="screen"
+	  if="($arg USE_EUS_PLANNER)">
       <rosparam command="load" file="$(find jsk_footstep_controller)/config/$(env ROBOT).yaml" />
       <remap from="planes" to="/ocs/env_server/occlusion_result_polygons" />
       <rosparam subst_value="true">
@@ -22,6 +24,31 @@
         global_frame_id: ground
       </rosparam>
       <remap from="grid_maps" to="/ocs/env_server/output" />
+      <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
+    </node>
+    <node pkg="jsk_footstep_planner"
+	  type="foostep_planner_node"
+	  name="footstep_planner"
+	  respawn="true"
+	  cwd="node"
+	  output="screen"
+	  unless="$(arg USE_EUS_PLANNER)">
+      <rosparam subst_value="true">
+	use_pointcloud_model: true
+	use_lazy_perception: true
+	use_local_movement: true
+	use_transition_limit: true
+	project_start_state: true
+	project_goal_state: true
+      </rosparam>
+      <rosparam>
+	resolution_x: 0.1
+	resolution_y: 0.1
+	resolution_theta: 0.1
+	footstep_size_x: 0.2
+	footstep_size_y: 0.1
+      </rosparam>
+      <remap from="~pointcloud_model" to="/ocs/env_sever/output" />
       <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
     </node>
     <!-- marker -->
