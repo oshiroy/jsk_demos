@@ -8,7 +8,7 @@
   <arg name="RUN_SELF_FILTER" default="false" />
   <arg if="$(arg RUN_SELF_FILTER)"
        name="SELF_FILTER_PARAM" default="$(find jsk_hrp2_ros_bridge)/config/$(env ROBOT)_self_filter.yaml" />
-  <arg name="USE_EUS_PLANNER" default="true"/> 
+  <arg name="USE_EUS_PLANNER" default="false"/> 
 
   <group ns="locomotion">
     <node if="$(arg RUN_SELF_FILTER)"
