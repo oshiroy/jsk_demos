@@ -71,19 +71,19 @@
           respawn="true"
           clear_params="true"
           output="screen"
-	  if="$(arg USE_EUS_PALNNER)">
+	  if="$(arg USE_EUS_PLANNER)">
       <rosparam subst_value="true">
         interruptible_mode: ":semi-interruptible"
       </rosparam>
     </node>
     <node pkg="jsk_footstep_controller"
-	  type="footstep_controller.l"
+	  type="footstep-controller.l"
 	  name="footstep_controller"
 	  output="screen"
-	  unless="(arg USE_EUS_PLANNER)">
+	  unless="$(arg USE_EUS_PLANNER)">
       <rosparam subst_value="true">
-	interruptible_mode: ":semi-interruptible"
-	auto_lookground: false
+        interruptible_mode: ":semi-interruptible"
+        auto_lookground: false
       </rosparam>
     </node>
     <node pkg="jsk_footstep_controller" type="footstep-refinement.l"

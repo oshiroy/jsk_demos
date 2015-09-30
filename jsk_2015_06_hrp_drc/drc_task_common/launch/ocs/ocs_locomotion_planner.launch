@@ -27,83 +27,83 @@
       <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
     </node>
     <node pkg="jsk_footstep_planner"
-	  type="foostep_planner_node"
+	  type="footstep_planner_node"
 	  name="footstep_planner"
 	  respawn="true"
 	  cwd="node"
 	  output="screen"
 	  unless="$(arg USE_EUS_PLANNER)">
-      <rosparam subst_value="true">
-	use_pointcloud_model: true
-	use_lazy_perception: true
-	use_local_movement: true
-	use_transition_limit: true
-	project_start_state: true
-	project_goal_state: true
-      </rosparam>
-      <rosparam>
-	resolution_x: 0.1
-	resolution_y: 0.1
-	resolution_theta: 0.1
-	footstep_size_x: 0.2
-	footstep_size_y: 0.1
-      </rosparam>
       <remap from="~pointcloud_model" to="/accumulated_heightmap_pointcloud/output" />
       <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
+      <rosparam subst_value="true">
+        use_pointcloud_model: true
+        use_lazy_perception: true
+        use_local_movement: true
+        use_transition_limit: true
+        project_start_state: true
+        project_goal_state: true
+      </rosparam>
+      <rosparam>
+        resolution_x: 0.1
+        resolution_y: 0.1
+        resolution_theta: 0.1
+        footstep_size_x: 0.2
+        footstep_size_y: 0.1
+      </rosparam>
       <!-- successors -->
       <rosparam>
-	successors:
-	- x: 0
-        y: -0.2
-        theta: 0
-	- x: 0
-        y: -0.3
-        theta: 0
-	- x: 0
-        y: -0.15
-        theta: 0
-	#      - x: 0.2
-	#        y: -0.2
-	#        theta: 0
-	#      - x: 0.25
-	#        y: -0.2
-	#        theta: 0
-	- x: 0.1
-	y: -0.2
-        theta: 0
-	- x: -0.1
-        y: -0.2
-        theta: 0
-	- x: 0
-        y: -0.2
-        theta: 0.17
-	- x: 0
-        y: -0.3
-        theta: 0.17
-	#      - x: 0.2
-	#        y: -0.2
-	#        theta: 0.17
-	#      - x: 0.25
-	#        y: -0.2
-	#        theta: 0.17
-	- x: 0.1
-        y: -0.2
-        theta: 0.17
-	- x: 0
-        y: -0.2
-        theta: -0.17
-	- x: 0
-        y: -0.3
-        theta: -0.17
-	#      - x: 0.2
-	#        y: -0.2
-	#        theta: -0.17
-	#      - x: 0.25
-	#        y: -0.2
-	#        theta: -0.17
-	- x: 0.1
-        y: -0.2
-        theta: -0.17
+        successors:
+        - x: 0
+          y: -0.2
+          theta: 0
+        - x: 0
+          y: -0.3
+          theta: 0
+        - x: 0
+          y: -0.15
+          theta: 0
+#      - x: 0.2
+#        y: -0.2
+#        theta: 0
+#      - x: 0.25
+#        y: -0.2
+#        theta: 0
+        - x: 0.1
+          y: -0.2
+          theta: 0
+        - x: -0.1
+          y: -0.2
+          theta: 0
+        - x: 0
+          y: -0.2
+          theta: 0.17
+        - x: 0
+          y: -0.3
+          theta: 0.17
+#      - x: 0.2
+#        y: -0.2
+#        theta: 0.17
+#      - x: 0.25
+#        y: -0.2
+#        theta: 0.17
+        - x: 0.1
+          y: -0.2
+          theta: 0.17
+        - x: 0
+          y: -0.2
+          theta: -0.17
+        - x: 0
+          y: -0.3
+          theta: -0.17
+#      - x: 0.2
+#        y: -0.2
+#        theta: -0.17
+#      - x: 0.25
+#        y: -0.2
+#        theta: -0.17
+        - x: 0.1
+          y: -0.2
+          theta: -0.17
       </rosparam>
     </node>
     <!-- marker -->
