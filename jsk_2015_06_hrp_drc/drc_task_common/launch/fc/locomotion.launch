@@ -8,6 +8,7 @@
   <arg name="RUN_SELF_FILTER" default="false" />
   <arg if="$(arg RUN_SELF_FILTER)"
        name="SELF_FILTER_PARAM" default="$(find jsk_hrp2_ros_bridge)/config/$(env ROBOT)_self_filter.yaml" />
+  <arg name="USE_EUS_PLANNER" default="true"/> 
 
   <group ns="locomotion">
     <node if="$(arg RUN_SELF_FILTER)"
@@ -248,7 +249,22 @@ nodelets:
         name="footstep_controller"
         respawn="true"
         clear_params="true"
-        output="screen">
+        output="screen"
+	if="$(arg USE_EUS_PLANNER)">
+    <rosparam subst_value="true">
+      interruptible_mode: ":semi-interruptible"
+    </rosparam>
+    <rosparam if="$(arg RUN_SELF_FILTER)" subst_value="true">
+      auto_lookground: false
+    </rosparam>
+  </node>
+  <node pkg="jsk_footstep_controller"
+	type="footstep-controller.l"
+	name="footstep_controller"
+	respawn="true"
+	clear_param="true"
+	output="screen"
+	unless="$(arg USE_EUS_PLANNER)">
     <rosparam subst_value="true">
       interruptible_mode: ":semi-interruptible"
     </rosparam>

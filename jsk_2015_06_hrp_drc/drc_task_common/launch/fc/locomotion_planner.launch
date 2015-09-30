@@ -1,5 +1,6 @@
 <launch>
   <arg name="REFINE_FOOTSTEP" default="true" />
+  <arg name="USE_EUS_PLANNER" default="false" />
 
   <group>
     <!-- Footstep planner -->
@@ -8,8 +9,9 @@
           name="footstep_planner"
           respawn="false"
           cwd="node"
-          output="screen">
-      <rosparam command="load" file="$(find jsk_footstep_controller)/config/jaxon.yaml" />
+          output="screen"
+	  if="$(arg USE_EUS_PLANNER)">
+      <rosparam command="load" file="$(find jsk_footstep_controller)/config/JAXON.yaml" />
       <remap from="planes" to="/env_server/occlusion_result_polygons" />
       <rosparam subst_value="true">
         use_planes: false
@@ -19,6 +21,16 @@
         global_frame_id: ground
       </rosparam>
       <remap from="grid_maps" to="/locomotion/env_server/output" />
+      <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
+    </node>
+    <node pkg="jsk_footstep_planner"
+	  type="footstep_planner_node"
+	  name="footstep_planner"
+	  respawn="true"
+	  cwd="node"
+	  output="screen"
+	  unless="$(arg USE_EUS_PLANNER)">
+      <remap from="~pointcloud_model" to="/accumulated_heightmap_pointcloud/output" />
       <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
     </node>
     <!-- marker -->
@@ -32,7 +44,7 @@
       <remap from="~planes_coefficients" to="/locomotion/plane_concatenator/output/coefficients" />
       <!-- <remap from="move_marker" to="$(arg POSE_REMAP)" /> -->
       <!-- <param name="wait_snapit_server" value="false" /> -->
-      <rosparam command="load" file="$(find jsk_footstep_controller)/config/jaxon.yaml" />
+      <rosparam command="load" file="$(find jsk_footstep_controller)/config/JAXON.yaml" />
       <remap from="project_footprint" to="/footstep_planner/project_footprint" />
       <rosparam>
         use_plane_snap: true
@@ -58,9 +70,20 @@
           name="footstep_controller"
           respawn="true"
           clear_params="true"
-          output="screen">
+          output="screen"
+	  if="$(arg USE_EUS_PALNNER)">
       <rosparam subst_value="true">
         interruptible_mode: ":semi-interruptible"
+      </rosparam>
+    </node>
+    <node pkg="jsk_footstep_controller"
+	  type="footstep_controller.l"
+	  name="footstep_controller"
+	  output="screen"
+	  unless="(arg USE_EUS_PLANNER)">
+      <rosparam subst_value="true">
+	interruptible_mode: ":semi-interruptible"
+	auto_lookground: false
       </rosparam>
     </node>
     <node pkg="jsk_footstep_controller" type="footstep-refinement.l"
