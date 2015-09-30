@@ -250,7 +250,7 @@ nodelets:
         respawn="true"
         clear_params="true"
         output="screen"
-	if="($arg USE_EUS_PLANNER)">
+	if="$(arg USE_EUS_PLANNER)">
     <rosparam subst_value="true">
       interruptible_mode: ":semi-interruptible"
     </rosparam>
@@ -264,7 +264,7 @@ nodelets:
 	respawn="true"
 	clear_param="true"
 	output="screen"
-	unless="($arg USE_EUS_PLANNER)">
+	unless="$(arg USE_EUS_PLANNER)">
     <rosparam subst_value="true">
       interruptible_mode: ":semi-interruptible"
     </rosparam>

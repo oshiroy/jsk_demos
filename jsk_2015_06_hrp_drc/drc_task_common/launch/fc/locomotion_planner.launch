@@ -1,6 +1,6 @@
 <launch>
   <arg name="REFINE_FOOTSTEP" default="true" />
-  <arg name="USE_EUS_PLANNER" default="true" />
+  <arg name="USE_EUS_PLANNER" default="false" />
 
   <group>
     <!-- Footstep planner -->
@@ -29,8 +29,8 @@
 	  respawn="true"
 	  cwd="node"
 	  output="screen"
-	  unless="($arg USE_EUS_PLANNER)">
-      <remap from="~pointcloud_model" to="/ocs/env_sever/output" />
+	  unless="$(arg USE_EUS_PLANNER)">
+      <remap from="~pointcloud_model" to="/accumulated_heightmap_pointcloud/output" />
       <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
     </node>
     <!-- marker -->
