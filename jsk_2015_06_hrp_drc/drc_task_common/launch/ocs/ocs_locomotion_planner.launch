@@ -33,7 +33,7 @@
 	  cwd="node"
 	  output="screen"
 	  unless="$(arg USE_EUS_PLANNER)">
-      <remap from="~pointcloud_model" to="/accumulated_heightmap_pointcloud/output" />
+      <remap from="~pointcloud_model" to="/accumulated_heightmap_pointcloud_static/output" />
       <remap from="footstep_planner/result" to="footstep_planner/result_non_refined" if="$(arg REFINE_FOOTSTEP)"/>
       <rosparam subst_value="true">
         use_pointcloud_model: true
@@ -148,11 +148,6 @@
           name="footstep_refinement" if="$(arg REFINE_FOOTSTEP)">
       <remap from="planner_result" to="footstep_planner/result_non_refined"/>
       <remap from="refined_footstep_result" to="footstep_planner/result" />
-    </node>
-    <node pkg="jsk_footstep_controller"
-	  type="gui-client.l" 
-	  name="loconotion_gui_client"
-	  unless="$(arg USE_EUS_PLANNER)">
     </node>
   </group>
 </launch>
